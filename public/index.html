@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conor's ChatGPT</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    #chat-area {
+      width: 80%;
+      max-width: 600px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 20px;
+      overflow: auto;
+    }
+
+    .box {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
+
+    .user {
+      background-color: #C4DBFE;
+    }
+
+    .answer {
+      background-color: aquamarine;
+    }
+
+    .submit-form {
+      width: 80%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .input {
+      width: 100%;
+      display: flex;
+    }
+
+    textarea {
+      flex: 1;
+      margin-right: 10px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: none;
+    }
+
+    button {
+      padding: 10px;
+      background-color: #004089;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat-area"></div>
+  <div class="submit-form">
+    <div class="input">
+      <textarea name="input" id="input" cols="30" rows="3" placeholder="Type your message..."></textarea>
+      <button id="btn">Submit</button>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById("btn");
+    btn.addEventListener('click', getResponse);
+
+    async function getResponse() {
+      const inputText = document.getElementById("input").value;
+      const parentDiv = document.getElementById("chat-area");
+
+      if (inputText === '') {
+        return;
+      }
+
+      const message = document.createElement('div');
+      message.innerHTML = inputText;
+      message.classList.add("box", "user");
+      parentDiv.appendChild(message);
+
+      document.getElementById("input").value = '';
+
+      let res = await fetch('http://localhost:3000/chat', {
+        method: 'POST',
+        headers: { "Content-Type": 'application/json' },
+        body: JSON.stringify({ question: inputText })
+      });
+
+      const data = await res.json();
+
+      if (data.message) {
+        const answer = document.createElement('div');
+        answer.innerHTML = data.message;
+        answer.classList.add("box", "answer");
+        parentDiv.appendChild(answer);
+      }
+    }
+  </script>
+</body>
+</html>
